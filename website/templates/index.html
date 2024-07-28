@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Web App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .upload-box {
+            margin-bottom: 10px;
+            width: 300px;
+            max-width: 300px;
+            height: 300px; /* Adjust as needed */
+            border: 2px dashed #ccc;
+            background-size: cover;
+            background-position: center;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+        .upload-box img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none; /* Hide the image by default */
+        }
+        .upload-box::before {
+            content: "Click here to upload";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #666;
+        }
+        input[type="file"] {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<form action="/predict" method="POST" enctype="multipart/form-data">
+    <div class="upload-box">
+        <input type="file" name="image" accept="image/*" required onchange="previewImage(event)">
+        <img id="uploaded-image">
+    </div>
+    <button type="submit">Predict</button>
+</form>
+
+<h2>Detected currency</h2>
+<p>{{ class_names }}</p>
+
+<script>
+    // Function to preview the uploaded image
+    function previewImage(event) {
+        var imgElement = document.getElementById('uploaded-image');
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        
+        reader.onload = function(event) {
+            imgElement.src = event.target.result;
+            imgElement.style.display = "block"; // Show the image
+        }
+        
+        reader.readAsDataURL(file);
+    }
+
+    // Split the class names string by newline character to get an array of class names
+    var class_names = "{{ class_names }}".split("\n");
+
+    // Iterate over each class name and speak it when the page loads
+    window.onload = function() {
+        class_names.forEach(function(class_name) {
+            // Create an utterance for each class name
+            var utterance = new SpeechSynthesisUtterance("The detected currency is " + class_name);
+            speechSynthesis.speak(utterance);
+        });
+    };
+</script>
+
+</body>
+</html>
