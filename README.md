@@ -1,5 +1,3 @@
-# Bilind-People-Currency-Detection
-
 # Blind People Currency Detector
 
 ## About
